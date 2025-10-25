@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 
-# --- CÓDIGO NUEVO ---
 # 1. Función para crear los datos de ejemplo por defecto
 def get_default_data():
     """
@@ -24,41 +23,31 @@ st.write("Aplicación interactiva para entrenar un modelo de regresión lineal y
 st.write("Sube un archivo CSV y selecciona la variable dependiente (Y) y la variable independiente (X).")
 
 # 1. Cargar datos
-st.subheader("1️⃣ Cargar datos") [cite: 36]
-# --- TEXTO MODIFICADO ---
-uploaded_file = st.file_uploader("Sube un archivo CSV (Opcional, se usará un ejemplo por defecto)", type=["csv"]) [cite: 37]
+# --- CAMBIO AQUÍ: Se quitó el emoji "1️⃣" ---
+st.subheader("1. Cargar datos") 
+uploaded_file = st.file_uploader("Sube un archivo CSV (Opcional, se usará un ejemplo por defecto)", type=["csv"])
 
-# --- LÓGICA MODIFICADA ---
-# Ahora, 'data' existirá siempre, ya sea la cargada o la de por defecto.
+# Lógica para usar datos de ejemplo o los subidos
 if uploaded_file is not None:
-    # Si el usuario sube un archivo, úsalo
     data = pd.read_csv(uploaded_file)
     st.write("Vista previa de los datos (cargados por el usuario):")
 else:
-    # Si no, usa los datos por defecto
     data = get_default_data()
     st.write("Mostrando datos de ejemplo por defecto:")
 
-# --- TODO EL CÓDIGO DE AQUÍ ABAJO AHORA ESTÁ FUERA DEL 'IF' ---
-
-st.dataframe(data.head()) # [cite: 41]
+st.dataframe(data.head())
 
 # Seleccionar columnas
 columnas = data.columns.tolist()
-
-# --- LÓGICA MEJORADA ---
-# Intentar pre-seleccionar 'horas' y 'calificacion' si existen (para el ejemplo)
 default_x_index = 0
-default_y_index = 1 # Por defecto son la columna 0 y 1
-
+default_y_index = 1
 if 'horas' in columnas:
     default_x_index = columnas.index('horas')
 if 'calificacion' in columnas:
     default_y_index = columnas.index('calificacion')
-# --- FIN LÓGICA MEJORADA ---
 
-x_col = st.selectbox("Selecciona la variable independiente (X)", columnas, index=default_x_index) [cite: 46, 47]
-y_col = st.selectbox("Selecciona la variable dependiente (Y)", columnas, index=default_y_index) [cite: 48, 49]
+x_col = st.selectbox("Selecciona la variable independiente (X)", columnas, index=default_x_index)
+y_col = st.selectbox("Selecciona la variable dependiente (Y)", columnas, index=default_y_index)
 
 # Preparar datos para el modelo
 X = data[[x_col]]
@@ -69,62 +58,47 @@ model = LinearRegression()
 model.fit(X, y)
 y_pred = model.predict(X)
 
-st.success("Modelo entrenado correctamente") [cite: 50]
+st.success("Modelo entrenado correctamente")
 
 # 3. Mostrar ecuación y R²
-st.subheader("2️⃣ Ecuación del modelo y $R^2$")
+# --- CAMBIO AQUÍ: Se quitó el emoji "2️⃣" ---
+st.subheader("2. Ecuación del modelo y R²")
     
-# Obtener coeficiente e intercepto
 coef = model.coef_[0]
 intercept = model.intercept_
 
-# Mostrar Ecuación
-st.write("**Ecuación del modelo:**") [cite: 67]
-# Usamos st.latex para mostrar la fórmula matemática como en el PDF
-st.latex(f"Y = {coef:.2f}X + {intercept:.2f}") # [cite: 73]
+st.write("**Ecuación del modelo:**")
+st.latex(f"Y = {coef:.2f}X + {intercept:.2f}")
 
-# Calcular y mostrar el R²
 r2 = r2_score(y, y_pred)
     
-# Usamos st.metric para un formato destacado como en el PDF
-st.metric(label="Coeficiente de Determinación ($R^2$)", value=f"{r2:.4f}") [cite: 69, 70]
-st.write(f"El valor de R² es: {r2:.4f}") [cite: 71]
+st.metric(label="Coeficiente de Determinación ($R^2$)", value=f"{r2:.4f}")
+st.write(f"El valor de R² es: {r2:.4f}")
 
 # 4. Predicción interactiva
-st.subheader("3️⃣ Realiza una predicción") [cite: 75]
+# --- CAMBIO AQUÍ: Se quitó el emoji "3️⃣" ---
+st.subheader("3. Realiza una predicción")
     
-# Usamos st.number_input para que el usuario ingrese un valor
-# Usamos la media como valor por defecto, como en el ejemplo (3.00)
 default_val = float(X.mean()) 
-new_x = st.number_input(f"Introduce un valor para {x_col}:", value=default_val) [cite: 76, 77]
+new_x = st.number_input(f"Introduce un valor para {x_col}:", value=default_val)
     
-# Preparamos el valor para el modelo (debe ser un array 2D)
 new_x_reshaped = np.array([[new_x]])
 prediction = model.predict(new_x_reshaped)
     
-# Mostramos la predicción
-st.write(f"**Predicción para {x_col} = {new_x}: {prediction[0]:.2f}**") [cite: 78]
+st.write(f"**Predicción para {x_col} = {new_x}: {prediction[0]:.2f}**")
 
 # 5. Generar gráfico
-st.subheader("4️⃣ Visualización del modelo") [cite: 79]
+# --- CAMBIO AQUÍ: Se quitó el emoji "4️⃣" ---
+st.subheader("4. Visualización del modelo")
     
-# Crear gráfico con Matplotlib
 fig, ax = plt.subplots()
-
-# 1. Datos reales (puntos azules)
-ax.scatter(X, y, color='blue', label='Datos reales') [cite: 82]
+ax.scatter(X, y, color='blue', label='Datos reales')
+ax.plot(X, y_pred, color='red', label='Línea de regresión')
+ax.scatter(new_x, prediction, color='green', s=100, label='Predicción', zorder=5)
     
-# 2. Línea de regresión (línea roja)
-ax.plot(X, y_pred, color='red', label='Línea de regresión') [cite: 83]
-    
-# 3. Predicción (punto verde grande)
-ax.scatter(new_x, prediction, color='green', s=100, label='Predicción', zorder=5) [cite: 83]
-    
-# Estilo y etiquetas (como en el PDF)
-ax.set_xlabel(x_col) [cite: 92]
-ax.set_ylabel(y_col) [cite: 80]
+ax.set_xlabel(x_col)
+ax.set_ylabel(y_col)
 ax.legend()
 ax.grid(True)
     
-# Mostrar gráfico en Streamlit
 st.pyplot(fig)
